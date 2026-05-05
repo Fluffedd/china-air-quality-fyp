@@ -1,0 +1,13 @@
+本项目依赖安装（建议在 venv/conda 环境中）：
+
+1) 安装基础依赖（你原本项目用到的包，如 streamlit / pandas / plotly / prophet / sklearn 等）
+2) 安装登录系统（MySQL）依赖：
+
+   pip install pymysql
+
+3) 在 MySQL 中创建数据库（若尚未创建）：
+   CREATE DATABASE air_quality;
+   并在 `.streamlit/secrets.toml` 中配置 DB_HOST / DB_NAME / DB_USER / DB_PASS / DB_PORT
+
+4) 启动应用：
+   streamlit run app.py

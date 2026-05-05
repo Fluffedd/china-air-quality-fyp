@@ -1,0 +1,20 @@
+# Large data files — too big for GitHub (14GB total)
+data/
+
+# Secrets — never commit these
+**/secrets.toml
+.env
+
+# Claude Code local config
+.claude/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Environment
+.env
+venv/
+.venv/
