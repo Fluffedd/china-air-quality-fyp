@@ -4,6 +4,19 @@ A full-stack data science project that collects, cleans, analyses, and forecasts
 
 ---
 
+## Screenshots
+
+**Realtime AQI Map — live city-level air quality across China**
+![Realtime AQI Map](screenshots/dashboard_realtime_map.png)
+
+**30-Day AQI Forecast — Prophet time-series prediction with confidence intervals**
+![AQI Forecast](screenshots/dashboard_forecast.png)
+
+**Model Evaluation — test set prediction vs actual (outlier detection included)**
+![Model Prediction](screenshots/model_prediction.png)
+
+---
+
 ## Features
 
 | Module | Description |
