@@ -184,32 +184,34 @@ geo = safe_load_json(CITY_GEO_FILE)
 if not geo:
     st.warning("⚠️ 未找到 city_geo.json 或文件为空。请先运行 scripts/geo_builder.py 生成 city_geo.json。 页面仍会尝试通过 daily/cleaned 中的城市名继续运行。")
 
-# load city list from daily_cities or cleaned_cities as priority
-@cached_data
-def load_city_list() -> List[str]:
+# load city list — try CSV files first, then city_geo.json, then config map
+def load_city_list(geo_dict: dict) -> List[str]:
     cities = set()
-    # daily
-    if DAILY_DIR.exists():
-        for f in DAILY_DIR.glob("*.csv"):
-            try:
-                df = pd.read_csv(f, usecols=["city"], encoding="utf-8")
-                cities.update(df["city"].dropna().astype(str).unique().tolist())
-            except Exception:
-                continue
-    # fallback cleaned
-    if not cities and CLEANED_DIR.exists():
-        for f in CLEANED_DIR.glob("*.csv"):
-            try:
-                df = pd.read_csv(f, usecols=["city"], encoding="utf-8")
-                cities.update(df["city"].dropna().astype(str).unique().tolist())
-            except Exception:
-                continue
-    # fallback to city_geo keys
-    if not cities and geo:
-        cities.update(list(geo.keys()))
+    # try daily_cities CSVs
+    for search_dir in [DAILY_DIR, CLEANED_DIR]:
+        if search_dir.exists():
+            for f in search_dir.glob("*.csv"):
+                try:
+                    # try both encodings
+                    for enc in ["utf-8", "utf-8-sig"]:
+                        try:
+                            df = pd.read_csv(f, usecols=["city"], encoding=enc)
+                            cities.update(df["city"].dropna().astype(str).unique().tolist())
+                            break
+                        except Exception:
+                            continue
+                except Exception:
+                    continue
+    # fallback: city_geo.json keys
+    if not cities and geo_dict:
+        cities.update(list(geo_dict.keys()))
+    # final fallback: hardcoded major cities from config
+    if not cities:
+        from src.config import CITY_CN_MAP
+        cities.update(list(CITY_CN_MAP.values()))
     return sorted(cities)
 
-all_cities = load_city_list()
+all_cities = load_city_list(geo)
 if not all_cities:
     st.error("无法找到任何城市（daily_cities / cleaned_cities / city_geo.json 均为空）。请先生成或放入数据，再刷新本页面。")
     st.stop()
