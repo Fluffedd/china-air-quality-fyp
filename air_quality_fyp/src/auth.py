@@ -202,11 +202,24 @@ def login_as(email: str) -> None:
     st.session_state["auth_user"] = True
 
 
+def _db_configured() -> bool:
+    """Return True only if all required DB secrets are present."""
+    required = ["DB_HOST", "DB_NAME", "DB_USER", "DB_PASS"]
+    return all(_get_secret(k) for k in required)
+
+
 def require_login() -> None:
     """
     Call this near the top of every page (after st.set_page_config).
     Stops the page unless user is logged in.
+    If no DB is configured (e.g. Streamlit Cloud demo), auto-login as guest.
     """
+    # Demo mode: no DB configured → auto-login as guest so app is viewable
+    if not _db_configured():
+        st.session_state["auth_user"] = True
+        st.session_state["auth_email"] = "demo@guest"
+        return
+
     if st.session_state.get("auth_user") and st.session_state.get("auth_email"):
         return
 

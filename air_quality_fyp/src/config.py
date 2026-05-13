@@ -48,12 +48,21 @@ CITY_COORDS = {
     "香港": [114.1694, 22.3193], "澳门": [113.5439, 22.1987]
 }
 
-# 本地路径（优先使用新版清洗结果：data/tempo）
-DATA_ROOT = Path(r"D:\Downloads\FYP CHINA\data")
-TEMPO_ROOT = DATA_ROOT / "tempo"
+# 路径自动适配本地和 Streamlit Cloud 环境
+# app.py 位于 air_quality_fyp/，data 在项目根目录的 data/
+_APP_DIR = Path(__file__).resolve().parent.parent  # air_quality_fyp/
+_PROJECT_ROOT = _APP_DIR.parent                     # FYP CHINA/
 
-# 如果 tempo 目录存在，则全项目默认使用 tempo 数据；
-# 否则回退到旧版 data 根目录，避免本地环境直接报错。
+# 优先找项目根目录下的 data，再找 app 目录下的 data（兼容旧结构）
+_LOCAL_DATA = Path(r"D:\Downloads\FYP CHINA\data")
+if _LOCAL_DATA.exists():
+    DATA_ROOT = _LOCAL_DATA
+elif (_PROJECT_ROOT / "data").exists():
+    DATA_ROOT = _PROJECT_ROOT / "data"
+else:
+    DATA_ROOT = _APP_DIR / "data"
+
+TEMPO_ROOT = DATA_ROOT / "tempo"
 ACTIVE_DATA_ROOT = TEMPO_ROOT if TEMPO_ROOT.exists() else DATA_ROOT
 
 CLEANED_DIR = str(ACTIVE_DATA_ROOT / "cleaned_cities")
