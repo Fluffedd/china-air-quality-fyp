@@ -184,15 +184,17 @@ geo = safe_load_json(CITY_GEO_FILE)
 if not geo:
     st.warning("⚠️ 未找到 city_geo.json 或文件为空。请先运行 scripts/geo_builder.py 生成 city_geo.json。 页面仍会尝试通过 daily/cleaned 中的城市名继续运行。")
 
-# load city list — try CSV files first, then city_geo.json, then config map
+# load city list — use city_geo.json as primary source (366 cities)
 def load_city_list(geo_dict: dict) -> List[str]:
     cities = set()
-    # try daily_cities CSVs
+    # PRIMARY: city_geo.json has the full 366-city list
+    if geo_dict:
+        cities.update(list(geo_dict.keys()))
+    # EXTRA: also add any cities found in CSV files
     for search_dir in [DAILY_DIR, CLEANED_DIR]:
         if search_dir.exists():
             for f in search_dir.glob("*.csv"):
                 try:
-                    # try both encodings
                     for enc in ["utf-8", "utf-8-sig"]:
                         try:
                             df = pd.read_csv(f, usecols=["city"], encoding=enc)
@@ -202,9 +204,6 @@ def load_city_list(geo_dict: dict) -> List[str]:
                             continue
                 except Exception:
                     continue
-    # fallback: city_geo.json keys
-    if not cities and geo_dict:
-        cities.update(list(geo_dict.keys()))
     # final fallback: hardcoded major cities from config
     if not cities:
         from src.config import CITY_CN_MAP
