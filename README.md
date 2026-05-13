@@ -1,5 +1,9 @@
 # China Air Quality Monitoring & Forecasting System
 
+[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit)](https://china-air-quality-fyp-ejthcxfbugmuevyanvg8dd.streamlit.app/)
+
+> **👆 Click the badge above to view the live dashboard**
+
 A full-stack data science project that collects, cleans, analyses, and forecasts air quality (AQI) across major Chinese cities (2020–2024), with an interactive Streamlit dashboard.
 
 ---
