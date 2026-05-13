@@ -1,5 +1,7 @@
 # Large data files — too big for GitHub (14GB total)
-data/
+# Only exclude the ROOT data folder (14GB raw data)
+# air_quality_fyp/data/ is a small sample dataset and IS committed
+/data/
 
 # Secrets — never commit these
 **/secrets.toml
